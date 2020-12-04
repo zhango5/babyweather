@@ -3,20 +3,23 @@ import config from '../../config/config.js';
 
 Page({
   data: {
-    date: '', // 日期
-    weatherInfo: {}, // 天气数据
-    inputContent: '', // 输入的城市名
+    date: '',         // 日期
+    weatherInfo: {},  // 天气数据
+    inputContent: '', // 输入框内容
   },
 
-  localCity: '', // 本地城市
-  currentCity: '', // 查看城市
+  localCity: null,    // 本地城市
+  currentCity: null,  // 查看城市
 
   onLoad(options) {
-    this.checkVersion(); // 版本检查
-    this.updateTime(); // 设置时间
+    this.checkVersion();  // 版本检查
+    this.updateTime();    // 设置时间
     // 获取天气
-    if (options.city) this.searchByCity(options.city);
-    else this.getCurCityWeacher();
+    if (options.city) {
+      this.searchByCity(options.city);
+    } else {
+      this.getLocalCityWeacher();
+    }
   },
 
   /**
@@ -36,12 +39,17 @@ Page({
     if (localVersion !== config.version) {
       wx.showModal({
         title: `${config.name} ${config.version}`,
-        content: config.versionInfo,
+        content: `${config.versionDate}${config.versionInfo}`,
         showCancel: false,
         confirmText: '我知道了',
         success: (res) => {
-          if (res.confirm)
-            wx.setStorage({ key: 'version', data: config.version }); // 设置版本号
+          if (res.confirm) {
+            // 设置版本号
+            wx.setStorage({
+              key: 'version',
+              data: config.version
+            });
+          }
         }
       });
     }
@@ -50,7 +58,7 @@ Page({
   /**
    * 获取当前城市天气数据
    */
-  getCurCityWeacher() {
+  getLocalCityWeacher() {
     wx.showToast({ title: '正在定位...', icon: 'loading', duration: 2000000, });
     // 获取当前经纬度
     wx.getLocation({
@@ -70,6 +78,8 @@ Page({
    * @param {number} longitude 经度
    */
   searchByLocation(latitude, longitude) {
+    // 更新时间
+    this.updateTime();
     wx.showToast({ title: '正在查询...', icon: 'loading', duration: 2000000 });
     // 通过经纬度获取天气数据
     wx.request({
@@ -95,6 +105,8 @@ Page({
    * @param {string} city 
    */
   searchByCity(city) {
+    // 更新时间
+    this.updateTime();
     // loading
     wx.showToast({ title: '正在加载...', icon: 'loading', duration: 2000000 });
     // 通过城市名获取天气数据
@@ -105,10 +117,9 @@ Page({
         wx.hideToast();
         if (res.data.showapi_res_body.ret_code == 0) {
           // 设置全局变量
-          this.setData({ weatherInfo: this.processData(res.data.showapi_res_body) });
           this.currentCity = res.data.showapi_res_body.cityInfo.c3
+          this.setData({ weatherInfo: this.processData(res.data.showapi_res_body) });
         } else {
-          wx.hideToast()
           wx.showModal({ title: '查询失败', content: '输入的城市名称有误，请重新输入！', showCancel: false });
         }
       },
@@ -116,7 +127,14 @@ Page({
         wx.hideToast()
         wx.showModal({ title: '网络超时', content: '当前网络不可用,请检查网络设置！', showCancel: false });
       }
-    })
+    });
+  },
+
+  /**
+   * 刷新
+   */
+  refresh() {
+    this.searchByCity(this.currentCity);
   },
 
   /**
@@ -124,13 +142,13 @@ Page({
    * @param {object} data 数据
    */
   processData(data) {
-    let weatherInfo = {};
-
+    const weatherInfo = {};
+    // 城市信息
     weatherInfo.city = {};
     weatherInfo.city.id = data.cityInfo.c1;
     weatherInfo.city.name_en = data.cityInfo.c2;
     weatherInfo.city.name = data.cityInfo.c3;
-
+    // 天气信息
     weatherInfo.now = data.now;
     weatherInfo.today = data.f1;
     weatherInfo.forecast1 = [data.f2, data.f3, data.f4];
@@ -142,8 +160,23 @@ Page({
     for (let i = 0; i < weatherInfo.forecast2.length; i++) {
       weatherInfo.forecast2[i].weekday = this.formatWeekday(weatherInfo.forecast2[i].weekday);
     }
-
     return weatherInfo;
+  },
+
+  /**
+   * 格式化星期数
+   * @param {number} index 星期数
+   */
+  formatWeekday(index) {
+    const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+    return weekdays[index];
+  },
+
+  /**
+   * 清除输入框内容
+   */
+  clearInputContent() {
+    this.setData({ inputContent: '' });
   },
 
   /**
@@ -178,13 +211,6 @@ Page({
   },
 
   /**
-   * 清除输入框内容
-   */
-  clearInputContent() {
-    this.setData({ inputContent: '' });
-  },
-
-  /**
    * 点击刷新按钮
    */
   onRefreshBtnClick() {
@@ -192,27 +218,15 @@ Page({
   },
 
   /**
-   * 刷新
-   */
-  refresh() {
-    this.searchByCity(this.currentCity);
-  },
-
-  /**
    * 点击定位按钮
    */
   onLocalBtnClick() {
     this.clearInputContent();
-    this.searchByCity(this.localCity);
-  },
-
-  /**
-   * 格式化星期数
-   * @param {number} index 星期数
-   */
-  formatWeekday(index) {
-    const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-    return weekdays[index];
+    if (this.localCity) {
+      this.searchByCity(this.localCity);
+    } else {
+      this.getLocalCityWeacher();
+    }
   },
 
   /**
