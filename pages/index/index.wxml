@@ -1,11 +1,13 @@
-<view class="weather">
+<view class="weather {{weather.text=='晴'?'well':'bad'}}">
 	<!-- 搜索 -->
 	<view class="search">
 		<!-- 输入框 -->
 		<view class="left">
-			<input class="inputField" confirm-type="search" bindinput="onInputFieldChange" bindconfirm="onSearchBtnClick" placeholder="请输入城市名" value="{{inputContent}}" />
+			<input class="inputField" confirm-type="search" bindinput="onInputFieldChange" bindconfirm="onSearchBtnClick"
+				placeholder="请输入城市名" value="{{inputContent}}" />
 			<!-- 清除按钮 -->
-			<image class="clearBtn" src="../../images/clear.png" style="display:{{inputContent.length > 0 ? 'block' : 'none'}}" bindtap="onClearBtnClick"></image>
+			<image class="clearBtn" src="../../images/clear.png"
+				style="display:{{inputContent.length > 0 ? 'block' : 'none'}}" bindtap="onClearBtnClick"></image>
 		</view>
 		<!-- 分割线 -->
 		<view class="separator"></view>
@@ -22,8 +24,8 @@
 		<!-- 地址、时间 -->
 		<view class="info" bindtap="onLocalBtnClick">
 			<image class="localImg" src="../../images/location.png"></image>
-			<view class="city">{{weatherInfo.city.name}}</view>
-			<view class="date">（{{date}}）</view>
+			<view class="city">{{city.name}}</view>
+			<view class="date">（{{time}}）</view>
 		</view>
 		<!-- 更新时间、刷新按钮 -->
 		<view class="update" bindtap="onRefreshBtnClick">{{weatherInfo.now.temperature_time}} 更新
@@ -35,18 +37,18 @@
 	<view class="today">
 		<view class="baseInfo">
 			<!-- 温度 -->
-			<view class="temperature">{{weatherInfo.now.temperature}}
+			<view class="temperature">{{weather.temp}}
 				<view class="symbol">℃</view>
 			</view>
 			<!-- 图片 -->
 			<view class="weatherImg">
-				<image class="img" src="{{weatherInfo.now.weather_pic}}"></image>
+				<image class="img" src='{{"../../images/color-128/" + weather.icon + ".png"}}'></image>
 			</view>
 			<!-- 全天 -->
 			<view class="detail">
-				<view class="type">{{weatherInfo.now.weather}}</view>
-				<view class="temperature">白天：{{weatherInfo.today.day_air_temperature}} ℃</view>
-				<view class="temperature">夜晚：{{weatherInfo.today.night_air_temperature}} ℃</view>
+				<!-- <view class="type">{{weather.text}}</view> -->
+				<view class="temperature">日出：{{sun.sunrise}}</view>
+				<view class="temperature">日落：{{sun.sunset}}</view>
 			</view>
 		</view>
 		<!-- 其他信息 -->
@@ -123,27 +125,27 @@
 		<view class="item">
 			<image class="icon" src="../../images/suggestion/uv.png"></image>
 			<view class="type">紫外线指数</view>
-			<view class="content">{{ weatherInfo.today.index.uv.title}}</view>
+			<view class="content">{{ indices[5] }}</view>
 		</view>
 		<view class="item">
 			<image class="icon" src="../../images/suggestion/dressing.png"></image>
 			<view class="type">穿衣指数</view>
-			<view class="content">{{ weatherInfo.today.index.clothes.title}}</view>
+			<view class="content">{{ indices[3] }}</view>
 		</view>
 		<view class="item">
 			<image class="icon" src="../../images/suggestion/sport.png"></image>
 			<view class="type">运动指数</view>
-			<view class="content">{{ weatherInfo.today.index.sports.title}}</view>
+			<view class="content">{{ indices[1] }}</view>
 		</view>
 		<view class="item">
 			<image class="icon" src="../../images/suggestion/car_washing.png"></image>
 			<view class="type">洗车指数</view>
-			<view class="content">{{ weatherInfo.today.index.wash_car.title}}</view>
+			<view class="content">{{ indices[2] }}</view>
 		</view>
 		<view class="item">
 			<image class="icon" src="../../images/suggestion/flu.png"></image>
 			<view class="type">感冒指数</view>
-			<view class="content">{{ weatherInfo.today.index.cold.title}}</view>
+			<view class="content">{{ indices[9] }}</view>
 		</view>
 	</view>
 

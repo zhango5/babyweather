@@ -1,21 +1,23 @@
 {
-  "pages": [
-    "pages/index/index"
+  "pages":[
+    "pages/index/index",
+    "pages/logs/logs"
   ],
-  "window": {
+  "window":{
     "backgroundTextStyle": "dark",
     "navigationBarBackgroundColor": "#3d395a",
-    "navigationBarTitleText": "轻松天气",
+    "navigationBarTitleText": "宝贝天气",
     "navigationBarTextStyle": "white",
     "enablePullDownRefresh": true
   },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
   "permission": {
     "scope.userLocation": {
       "desc": "用于定位您当前所在的城市"
     }
   },
   "networkTimeout": {
-    "request": 10000
-  },
-  "sitemapLocation": "sitemap.json"
+    "request": 5000
+  }
 }

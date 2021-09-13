@@ -1,19 +1,25 @@
-import { formatTime } from '../../utils/util.js';
+import {
+  parseDateTime
+} from '../../utils/util.js';
 import config from '../../config/config.js';
 
 Page({
   data: {
-    date: '',         // 日期
-    weatherInfo: {},  // 天气数据
+    time: '', // 时间
+    city: {}, // 城市信息
+    weather: {}, // 实时数据
+    sun: {}, // 日出日落
+    days: {}, // 逐天数据
+    indices: {}, // 生活指数
     inputContent: '', // 输入框内容
   },
 
-  localCity: null,    // 本地城市
-  currentCity: null,  // 查看城市
+  localCity: null, // 本地城市
+  currentCity: null, // 查看城市
 
   onLoad(options) {
-    this.checkVersion();  // 版本检查
-    this.updateTime();    // 设置时间
+    // this.checkVersion();  // 版本检查
+    this.updateTime(); // 设置时间
     // 获取天气
     if (options.city) {
       this.searchByCity(options.city);
@@ -26,9 +32,9 @@ Page({
    * 更新时间
    */
   updateTime() {
-    const time = new Date(); // 获取当前时间对象
-    const date = formatTime(time).split(' ')[0] + ' ' + this.formatWeekday(time.getDay()); // 获取日期和星期数
-    this.setData({ date: date }); // 保存
+    this.setData({
+      time: parseDateTime(new Date, "yyyy-MM-dd HH:mm")
+    }); // 保存
   },
 
   /**
@@ -59,15 +65,54 @@ Page({
    * 获取当前城市天气数据
    */
   getLocalCityWeacher() {
-    wx.showToast({ title: '正在定位...', icon: 'loading', duration: 2000000, });
+    wx.showToast({
+      title: '正在定位...',
+      icon: 'loading',
+      duration: 2000000,
+    });
     // 获取当前经纬度
     wx.getLocation({
       success: (res) => {
+        this.getCityByLocation(res.latitude, res.longitude);
         this.searchByLocation(res.latitude, res.longitude);
+        this.getSunRise(res.latitude, res.longitude);
+        this.getCityIndices(res.latitude, res.longitude);
       },
       fail: () => {
         wx.hideToast();
-        wx.showModal({ title: '定位失败', content: '获取不到本地天气了呢！', showCancel: false, });
+        wx.showModal({
+          title: '定位失败',
+          content: '获取不到本地天气了呢！',
+          showCancel: false,
+        });
+      }
+    });
+  },
+
+  /**
+   * 通过经纬度查询城市信息
+   * @param {*} lat 
+   * @param {*} lng 
+   */
+  getCityByLocation(lat, lng) {
+    wx.request({
+      url: `${config.request.cityinfo}`,
+      data: {
+        key: config.request.key,
+        location: lng + ',' + lat
+      },
+      success: (res) => {
+        // 保存城市数据
+        this.setData({
+          city: res.data.location[0]
+        });
+      },
+      fail: () => {
+        wx.showModal({
+          title: '网络超时',
+          content: '连接服务器失败,请检查网络设置！',
+          showCancel: false
+        });
       }
     });
   },
@@ -80,22 +125,99 @@ Page({
   searchByLocation(latitude, longitude) {
     // 更新时间
     this.updateTime();
-    wx.showToast({ title: '正在查询...', icon: 'loading', duration: 2000000 });
+    wx.showToast({
+      title: '正在查询...',
+      icon: 'loading',
+      duration: 2000000
+    });
     // 通过经纬度获取天气数据
     wx.request({
-      url: `${config.request.host}/gps-to-weather?from=1&lat=${latitude}&lng=${longitude}&needIndex=1&needMoreDay=1`,
-      data: {},
-      header: config.request.header,
+      url: `${config.request.realtime}`,
+      data: {
+        key: config.request.key,
+        location: longitude + ',' + latitude
+      },
       success: (res) => {
         // 保存天气数据
-        this.setData({ weatherInfo: this.processData(res.data.showapi_res_body) });
-        this.localCity = res.data.showapi_res_body.cityInfo.c3;
-        this.currentCity = res.data.showapi_res_body.cityInfo.c3;
+        this.setData({
+          weather: res.data.now
+        });
         wx.hideToast();
       },
       fail: () => {
         wx.hideToast();
-        wx.showModal({ title: '网络超时', content: '连接服务器失败,请检查网络设置！', showCancel: false });
+        wx.showModal({
+          title: '网络超时',
+          content: '连接服务器失败,请检查网络设置！',
+          showCancel: false
+        });
+      }
+    });
+  },
+
+  /**
+   * 通过经纬度查询城市日出日落信息
+   * @param {*} lat 
+   * @param {*} lng 
+   */
+  getSunRise(lat, lng) {
+    wx.request({
+      url: `${config.request.sun}`,
+      data: {
+        key: config.request.key,
+        location: lng + ',' + lat,
+        date: parseDateTime(new Date, 'yyyyMMdd')
+      },
+      success: (res) => {
+        var sun = {
+          sunrise: parseDateTime(new Date(res.data.sunrise), 'HH:mm'),
+          sunset: parseDateTime(new Date(res.data.sunset), 'HH:mm')
+        }
+        // 保存数据
+        this.setData({
+          sun: sun
+        });
+      },
+      fail: () => {
+        wx.showModal({
+          title: '网络超时',
+          content: '连接服务器失败,请检查网络设置！',
+          showCancel: false
+        });
+      }
+    });
+  },
+
+  /**
+   * 通过经纬度查询城市生活指数信息
+   * @param {*} lat 
+   * @param {*} lng 
+   */
+  getCityIndices(lat, lng) {
+    wx.request({
+      url: `${config.request.indices}`,
+      data: {
+        key: config.request.key,
+        location: lng + ',' + lat,
+        type: "0"
+      },
+      success: (res) => {
+        var indices = new Array
+        var i
+        for (i in res.data.daily) {
+          indices[res.data.daily[i].type] = res.data.daily[i].category
+        }
+        // 保存数据
+        this.setData({
+          indices: indices
+        });
+      },
+      fail: () => {
+        wx.showModal({
+          title: '网络超时',
+          content: '连接服务器失败,请检查网络设置！',
+          showCancel: false
+        });
       }
     });
   },
@@ -108,7 +230,11 @@ Page({
     // 更新时间
     this.updateTime();
     // loading
-    wx.showToast({ title: '正在加载...', icon: 'loading', duration: 2000000 });
+    wx.showToast({
+      title: '正在加载...',
+      icon: 'loading',
+      duration: 2000000
+    });
     // 通过城市名获取天气数据
     wx.request({
       url: config.request.host + '/area-to-weather?area=' + city + '&needIndex=1&needMoreDay=1',
@@ -118,14 +244,24 @@ Page({
         if (res.data.showapi_res_body.ret_code == 0) {
           // 设置全局变量
           this.currentCity = res.data.showapi_res_body.cityInfo.c3
-          this.setData({ weatherInfo: this.processData(res.data.showapi_res_body) });
+          this.setData({
+            weatherInfo: this.processData(res.data.showapi_res_body)
+          });
         } else {
-          wx.showModal({ title: '查询失败', content: '输入的城市名称有误，请重新输入！', showCancel: false });
+          wx.showModal({
+            title: '查询失败',
+            content: '输入的城市名称有误，请重新输入！',
+            showCancel: false
+          });
         }
       },
       fail: () => {
         wx.hideToast()
-        wx.showModal({ title: '网络超时', content: '当前网络不可用,请检查网络设置！', showCancel: false });
+        wx.showModal({
+          title: '网络超时',
+          content: '当前网络不可用,请检查网络设置！',
+          showCancel: false
+        });
       }
     });
   },
@@ -142,6 +278,7 @@ Page({
    * @param {object} data 数据
    */
   processData(data) {
+    console.log(data)
     const weatherInfo = {};
     // 城市信息
     weatherInfo.city = {};
@@ -176,7 +313,9 @@ Page({
    * 清除输入框内容
    */
   clearInputContent() {
-    this.setData({ inputContent: '' });
+    this.setData({
+      inputContent: ''
+    });
   },
 
   /**
@@ -185,7 +324,9 @@ Page({
    */
   onInputFieldChange(event) {
     // 设置全局变量
-    this.setData({ inputContent: event.detail.value });
+    this.setData({
+      inputContent: event.detail.value
+    });
   },
 
   /**
@@ -199,7 +340,11 @@ Page({
       // 清空输入
       this.clearInputContent();
     } else {
-      wx.showToast({ title: '请输入要查询的城市！', icon: 'none', duration: 1000 });
+      wx.showToast({
+        title: '请输入要查询的城市！',
+        icon: 'none',
+        duration: 1000
+      });
     }
   },
 
