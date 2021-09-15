@@ -25,10 +25,10 @@
 		<view class="info" bindtap="onLocalBtnClick">
 			<image class="localImg" src="../../images/location.png"></image>
 			<view class="city">{{city.name}}</view>
-			<view class="date">（{{time}}）</view>
+			<view class="date">（{{date}}）</view>
 		</view>
 		<!-- 更新时间、刷新按钮 -->
-		<view class="update" bindtap="onRefreshBtnClick">{{weatherInfo.now.temperature_time}} 更新
+		<view class="update" bindtap="onRefreshBtnClick">{{updateTime}} 更新
 			<image class="refreshImg" src="../../images/refresh.png"></image>
 		</view>
 	</view>
@@ -41,12 +41,12 @@
 				<view class="symbol">℃</view>
 			</view>
 			<!-- 图片 -->
-			<view class="weatherImg">
+			<view class="weatherImg" wx:if="{{weather}}">
 				<image class="img" src='{{"../../images/color-128/" + weather.icon + ".png"}}'></image>
 			</view>
 			<!-- 全天 -->
 			<view class="detail">
-				<!-- <view class="type">{{weather.text}}</view> -->
+				<view class="type">{{weather.text}}</view>
 				<view class="temperature">日出：{{sun.sunrise}}</view>
 				<view class="temperature">日落：{{sun.sunset}}</view>
 			</view>
@@ -54,71 +54,49 @@
 		<!-- 其他信息 -->
 		<view class="moreInfo">
 			<!-- 1 -->
-			<view class="item">空气：{{weatherInfo.now.aqiDetail.quality}}</view>
+			<view class="item">空气：{{air.category}}</view>
 			<view class="separator"></view>
-			<view class="item">湿度：{{weatherInfo.now.sd}}</view>
+			<view class="item">湿度：{{weather.humidity}} %</view>
 			<view class="separator"></view>
-			<view class="item">PM 2.5：{{weatherInfo.now.aqiDetail.pm2_5}}</view>
+			<view class="item">PM 2.5：{{air.pm2p5}}</view>
 			<!-- 2 -->
-			<view class="item">气压：{{weatherInfo.today.air_press}}</view>
+			<view class="item">气压：{{weather.pressure}} hPa</view>
 			<view class="separator"></view>
-			<view class="item">风向：{{weatherInfo.now.wind_direction}}</view>
+			<view class="item">风向：{{weather.windDir}}</view>
 			<view class="separator"></view>
-			<view class="item">{{weatherInfo.today.day_wind_power}}</view>
+			<view class="item">风速：{{weather.windSpeed}} km/h</view>
 		</view>
 	</view>
 
 	<!-- 天气预报 -->
-	<swiper class="forecast" autoplay="true" interval="5000" circular="true">
-		<!-- 第一页 -->
-		<swiper-item class="block">
+	<view class="forecast">
+		<view class="block">
 			<!-- 前空白部分 -->
 			<view class="blank"></view>
 			<!-- 天气信息 -->
 			<view class="container">
-				<view wx:for="{{weatherInfo.forecast1}}" wx:for-index="index" wx:for-item="forecast" wx:key="weekday">
+				<view wx:for="{{daily}}" wx:for-index="index" wx:for-item="day" wx:key="weekday">
 					<view class="separator" wx:if="{{index===1}}"></view>
 					<view class="item">
-						<view>{{forecast.weekday}}</view>
+						<view class="info">{{day.fxDate}}</view>
 						<view class="info">
-							<image class="icon" src="{{forecast.day_weather_pic}}"></image>
-							<view class="type">{{forecast.day_weather}} / {{forecast.night_weather}}</view>
+							<image class="icon" src='{{"../../images/color-128/" + day.iconDay + ".png"}}'></image>
+							<!-- <view class="type">{{day.textDay}}</view> -->
 						</view>
-						<view>{{forecast.day_air_temperature}} / {{forecast.night_air_temperature}} ℃</view>
+						<view class="info">~</view>
+						<view class="info">
+							<image class="icon" src='{{"../../images/color-128/" + day.iconNight + ".png"}}'></image>
+							<!-- <view class="type">{{day.textNight}}</view> -->
+						</view>
+						<view>{{day.tempMin}} / {{day.tempMax}} ℃</view>
 					</view>
 					<view class="separator" wx:if="{{index===1}}"></view>
 				</view>
 			</view>
 			<!-- 后空白部分 -->
-			<view class="blank">
-				<image class="arrowImg" style="display:block" src="../../images/arrow.png"></image>
-			</view>
-		</swiper-item>
-		<!-- 第二页 -->
-		<swiper-item class="block">
-			<!--前空白部分-->
 			<view class="blank"></view>
-			<!-- 天气信息 -->
-			<view class="container">
-				<view wx:for="{{weatherInfo.forecast2}}" wx:for-index="index" wx:for-item="forecast" wx:key="weekday">
-					<view class="separator" wx:if="{{index===1}}"></view>
-					<view class="item">
-						<view>{{forecast.weekday}}</view>
-						<view class="info">
-							<image class="icon" src="{{forecast.day_weather_pic}}"></image>
-							<view class="type">{{forecast.day_weather}} / {{forecast.night_weather}}</view>
-						</view>
-						<view>{{forecast.day_air_temperature}} / {{forecast.night_air_temperature}} ℃</view>
-					</view>
-					<view class="separator" wx:if="{{index===1}}"></view>
-				</view>
-			</view>
-			<!-- 后空白部分 -->
-			<view class="blank">
-				<image class="arrowImg" style="display:block" src="../../images/arrow.png"></image>
-			</view>
-		</swiper-item>
-	</swiper>
+		</view>
+	</view>
 
 	<!-- 出行建议 -->
 	<view class="suggestion">

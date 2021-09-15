@@ -5,26 +5,29 @@ import config from '../../config/config.js';
 
 Page({
   data: {
-    time: '', // 时间
+    date: '', // 日期
+    updateTime: '', // 更新时间
     city: {}, // 城市信息
     weather: {}, // 实时数据
     sun: {}, // 日出日落
     days: {}, // 逐天数据
     indices: {}, // 生活指数
+    air: {}, // 空气指数
+    daily: {}, // 逐天天气预报
     inputContent: '', // 输入框内容
   },
 
   localCity: null, // 本地城市
-  currentCity: null, // 查看城市
 
   onLoad(options) {
     // this.checkVersion();  // 版本检查
     this.updateTime(); // 设置时间
     // 获取天气
     if (options.city) {
-      this.searchByCity(options.city);
+      this.getWeatherByName(options.city);
     } else {
-      this.getLocalCityWeacher();
+      // 根据定位获取天气
+      this.getWeatherByLocation();
     }
   },
 
@@ -33,7 +36,7 @@ Page({
    */
   updateTime() {
     this.setData({
-      time: parseDateTime(new Date, "yyyy-MM-dd HH:mm")
+      date: parseDateTime(new Date, "yyyy-MM-dd")
     }); // 保存
   },
 
@@ -64,7 +67,7 @@ Page({
   /**
    * 获取当前城市天气数据
    */
-  getLocalCityWeacher() {
+  getWeatherByLocation() {
     wx.showToast({
       title: '正在定位...',
       icon: 'loading',
@@ -74,9 +77,6 @@ Page({
     wx.getLocation({
       success: (res) => {
         this.getCityByLocation(res.latitude, res.longitude);
-        this.searchByLocation(res.latitude, res.longitude);
-        this.getSunRise(res.latitude, res.longitude);
-        this.getCityIndices(res.latitude, res.longitude);
       },
       fail: () => {
         wx.hideToast();
@@ -96,7 +96,7 @@ Page({
    */
   getCityByLocation(lat, lng) {
     wx.request({
-      url: `${config.request.cityinfo}`,
+      url: config.request.cityinfo,
       data: {
         key: config.request.key,
         location: lng + ',' + lat
@@ -106,6 +106,7 @@ Page({
         this.setData({
           city: res.data.location[0]
         });
+        this.getWeatherInfos();
       },
       fail: () => {
         wx.showModal({
@@ -122,7 +123,7 @@ Page({
    * @param {number} latitude 纬度
    * @param {number} longitude 经度
    */
-  searchByLocation(latitude, longitude) {
+  searchByLocation() {
     // 更新时间
     this.updateTime();
     wx.showToast({
@@ -135,12 +136,13 @@ Page({
       url: `${config.request.realtime}`,
       data: {
         key: config.request.key,
-        location: longitude + ',' + latitude
+        location: this.data.city.id
       },
       success: (res) => {
         // 保存天气数据
         this.setData({
-          weather: res.data.now
+          weather: res.data.now,
+          updateTime: parseDateTime(new Date(res.data.now.obsTime), "HH:mm")
         });
         wx.hideToast();
       },
@@ -160,12 +162,12 @@ Page({
    * @param {*} lat 
    * @param {*} lng 
    */
-  getSunRise(lat, lng) {
+  getSunRise() {
     wx.request({
       url: `${config.request.sun}`,
       data: {
         key: config.request.key,
-        location: lng + ',' + lat,
+        location: this.data.city.id,
         date: parseDateTime(new Date, 'yyyyMMdd')
       },
       success: (res) => {
@@ -193,12 +195,12 @@ Page({
    * @param {*} lat 
    * @param {*} lng 
    */
-  getCityIndices(lat, lng) {
+  getCityIndices() {
     wx.request({
       url: `${config.request.indices}`,
       data: {
         key: config.request.key,
-        location: lng + ',' + lat,
+        location: this.data.city.id,
         type: "0"
       },
       success: (res) => {
@@ -223,10 +225,74 @@ Page({
   },
 
   /**
+   * 通过经纬度查询城市空气指数信息
+   * @param {*} lat 
+   * @param {*} lng 
+   */
+  getAir() {
+    wx.request({
+      url: `${config.request.air}`,
+      data: {
+        key: config.request.key,
+        location: this.data.city.id
+      },
+      success: (res) => {
+        // 保存数据
+        this.setData({
+          air: res.data.now
+        });
+      },
+      fail: () => {
+        wx.showModal({
+          title: '网络超时',
+          content: '连接服务器失败,请检查网络设置！',
+          showCancel: false
+        });
+      }
+    });
+  },
+
+  /**
+   * 通过经纬度查询城市逐天天气预报
+   * @param {*} lat 
+   * @param {*} lng 
+   */
+  getDaily() {
+    wx.request({
+      url: `${config.request.daily}`,
+      data: {
+        key: config.request.key,
+        location: this.data.city.id
+      },
+      success: (res) => {
+        let d = new Array;
+        let i;
+        for (i in res.data.daily) {
+          let info = res.data.daily[i];
+          info.fxDate = this.differenceDay(new Date(info.fxDate));
+          d.push(info);
+        }
+
+        // 保存数据
+        this.setData({
+          daily: d
+        });
+      },
+      fail: () => {
+        wx.showModal({
+          title: '网络超时',
+          content: '连接服务器失败,请检查网络设置！',
+          showCancel: false
+        });
+      }
+    });
+  },
+
+  /**
    * 通过城市名查询天气
    * @param {string} city 
    */
-  searchByCity(city) {
+  getWeatherByName(city) {
     // 更新时间
     this.updateTime();
     // loading
@@ -237,23 +303,18 @@ Page({
     });
     // 通过城市名获取天气数据
     wx.request({
-      url: config.request.host + '/area-to-weather?area=' + city + '&needIndex=1&needMoreDay=1',
-      header: config.request.header,
+      url: `${config.request.cityinfo}`,
+      data: {
+        key: config.request.key,
+        location: city
+      },
       success: (res) => {
         wx.hideToast();
-        if (res.data.showapi_res_body.ret_code == 0) {
-          // 设置全局变量
-          this.currentCity = res.data.showapi_res_body.cityInfo.c3
-          this.setData({
-            weatherInfo: this.processData(res.data.showapi_res_body)
-          });
-        } else {
-          wx.showModal({
-            title: '查询失败',
-            content: '输入的城市名称有误，请重新输入！',
-            showCancel: false
-          });
-        }
+        // 保存城市数据
+        this.setData({
+          city: res.data.location[0]
+        });
+        this.getWeatherInfos();
       },
       fail: () => {
         wx.hideToast()
@@ -267,37 +328,21 @@ Page({
   },
 
   /**
-   * 刷新
+   * 获取天气信息
    */
-  refresh() {
-    this.searchByCity(this.currentCity);
+  getWeatherInfos() {
+    this.searchByLocation();
+    this.getSunRise();
+    this.getCityIndices();
+    this.getAir();
+    this.getDaily();
   },
 
   /**
-   * 处理天气数据
-   * @param {object} data 数据
+   * 刷新
    */
-  processData(data) {
-    console.log(data)
-    const weatherInfo = {};
-    // 城市信息
-    weatherInfo.city = {};
-    weatherInfo.city.id = data.cityInfo.c1;
-    weatherInfo.city.name_en = data.cityInfo.c2;
-    weatherInfo.city.name = data.cityInfo.c3;
-    // 天气信息
-    weatherInfo.now = data.now;
-    weatherInfo.today = data.f1;
-    weatherInfo.forecast1 = [data.f2, data.f3, data.f4];
-    weatherInfo.forecast2 = [data.f5, data.f6, data.f7];
-    // 处理星期数
-    weatherInfo.forecast1[0].weekday = '明天';
-    weatherInfo.forecast1[1].weekday = '后天';
-    weatherInfo.forecast1[2].weekday = this.formatWeekday(weatherInfo.forecast1[2].weekday);
-    for (let i = 0; i < weatherInfo.forecast2.length; i++) {
-      weatherInfo.forecast2[i].weekday = this.formatWeekday(weatherInfo.forecast2[i].weekday);
-    }
-    return weatherInfo;
+  refresh() {
+    this.getWeatherByName(this.data.city.name);
   },
 
   /**
@@ -307,6 +352,29 @@ Page({
   formatWeekday(index) {
     const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六', '周日'];
     return weekdays[index];
+  },
+
+  /**
+   * 计算日期差值
+   * @param {Date} date 日期
+   */
+  differenceDay(date) {
+    let today = new Date();
+    let n = date.getDay() - today.getDay();
+    switch (n) {
+      case -2:
+        return "前天";
+      case -1:
+        return "昨天";
+      case 0:
+        return "今天";
+      case 1:
+        return "明天";
+      case 2:
+        return "后天";
+      default:
+        return formatWeekday(date.getUTCDay());
+    }
   },
 
   /**
@@ -336,7 +404,7 @@ Page({
     // 输入是否为空
     if (this.data.inputContent.length > 0) {
       // 调用搜索函数
-      this.searchByCity(this.data.inputContent);
+      this.getWeatherByName(this.data.inputContent);
       // 清空输入
       this.clearInputContent();
     } else {
@@ -367,18 +435,18 @@ Page({
    */
   onLocalBtnClick() {
     this.clearInputContent();
-    if (this.localCity) {
-      this.searchByCity(this.localCity);
-    } else {
-      this.getLocalCityWeacher();
-    }
+    // if (this.localCity) {
+    //   this.getWeatherByName(this.localCity);
+    // } else {
+    this.getWeatherByLocation();
+    // }
   },
 
   /**
    * 下拉刷新
    */
   onPullDownRefresh() {
-    this.searchByCity(this.currentCity);
+    this.getWeatherByName(this.data.city.name);
     wx.stopPullDownRefresh();
   },
 
@@ -386,10 +454,10 @@ Page({
    * 分享给朋友
    */
   onShareAppMessage() {
-    const city = this.data.weatherInfo.city.name;
-    const now = this.data.weatherInfo.now;
+    const city = this.data.city.name;
+    const now = this.data.weather;
     return {
-      title: `${city}当前天气：${now.weather} | ${now.temperature}℃`,
+      title: `${city}当前天气：${now.text} | ${now.temp}℃`,
       path: `/pages/index/index?city=${city}`,
     };
   },
@@ -398,10 +466,10 @@ Page({
    * 分享至朋友圈
    */
   onShareTimeline() {
-    const city = this.data.weatherInfo.city.name;
-    const now = this.data.weatherInfo.now;
+    const city = this.data.city.name;
+    const now = this.data.weather;
     return {
-      title: `${city}当前天气：${now.weather} | ${now.temperature}℃`,
+      title: `${city}当前天气：${now.text} | ${now.temp}℃`,
       path: `city=${city}`,
     };
   }

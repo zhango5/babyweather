@@ -8,6 +8,8 @@ const config = {
     realtime: 'https://devapi.qweather.com/v7/weather/now',
     sun: 'https://devapi.qweather.com/v7/astronomy/sun',
     indices: 'https://devapi.qweather.com/v7/indices/1d',
+    air: 'https://devapi.qweather.com/v7/air/now',
+    daily: 'https://devapi.qweather.com/v7/weather/3d',
     key: 'a0676be9fd74407cb1b34cba1cf8ac68',
   },
 }
