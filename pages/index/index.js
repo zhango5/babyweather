@@ -14,14 +14,407 @@ Page({
     indices: {}, // 生活指数
     air: {}, // 空气指数
     daily: {}, // 逐天天气预报
+    hours: {}, // 24小时预报
     inputContent: '', // 输入框内容
   },
 
   localCity: null, // 本地城市
 
   onLoad(options) {
-    // this.checkVersion();  // 版本检查
     this.updateTime(); // 设置时间
+
+
+    let hoursdata = new Array;
+    hoursdata.push({
+      "fxTime": "15:00",
+      "temp": "2",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "335",
+      "windDir": "西北风",
+      "windScale": "3-4",
+      "windSpeed": "20",
+      "humidity": "11",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1025",
+      "cloud": "0",
+      "dew": "-25"
+    });
+    hoursdata.push({
+      "fxTime": "16:00",
+      "temp": "1",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "339",
+      "windDir": "西北风",
+      "windScale": "3-4",
+      "windSpeed": "24",
+      "humidity": "11",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1025",
+      "cloud": "0",
+      "dew": "-26"
+    });
+    hoursdata.push({
+      "fxTime": "17:00",
+      "temp": "0",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "341",
+      "windDir": "西北风",
+      "windScale": "4-5",
+      "windSpeed": "25",
+      "humidity": "11",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1026",
+      "cloud": "0",
+      "dew": "-26"
+    });
+    hoursdata.push({
+      "fxTime": "18:00",
+      "temp": "0",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "344",
+      "windDir": "西北风",
+      "windScale": "4-5",
+      "windSpeed": "25",
+      "humidity": "12",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1025",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "19:00",
+      "temp": "-2",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "349",
+      "windDir": "西北风",
+      "windScale": "3-4",
+      "windSpeed": "24",
+      "humidity": "13",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1025",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "20:00",
+      "temp": "-3",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "353",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "22",
+      "humidity": "14",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1025",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "21:00",
+      "temp": "-3",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "355",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "20",
+      "humidity": "14",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1026",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "22:00",
+      "temp": "-4",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "356",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "18",
+      "humidity": "16",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1026",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "23:00",
+      "temp": "-4",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "356",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "18",
+      "humidity": "16",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1026",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "00:00",
+      "temp": "-4",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "354",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "16",
+      "humidity": "16",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1027",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "01:00",
+      "temp": "-4",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "351",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "16",
+      "humidity": "16",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1028",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "02:00",
+      "temp": "-4",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "350",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "16",
+      "humidity": "16",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1028",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "03:00",
+      "temp": "-5",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "350",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "16",
+      "humidity": "16",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1028",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "04:00",
+      "temp": "-5",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "351",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "16",
+      "humidity": "15",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1027",
+      "cloud": "0",
+      "dew": "-28"
+    });
+    hoursdata.push({
+      "fxTime": "05:00",
+      "temp": "-5",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "352",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "16",
+      "humidity": "14",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1026",
+      "cloud": "0",
+      "dew": "-29"
+    });
+    hoursdata.push({
+      "fxTime": "06:00",
+      "temp": "-5",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "355",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "14",
+      "humidity": "16",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1025",
+      "cloud": "0",
+      "dew": "-27"
+    });
+    hoursdata.push({
+      "fxTime": "07:00",
+      "temp": "-7",
+      "icon": "150",
+      "text": "晴",
+      "wind360": "359",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "16",
+      "humidity": "20",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1024",
+      "cloud": "0",
+      "dew": "-26"
+    });
+    hoursdata.push({
+      "fxTime": "08:00",
+      "temp": "-5",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "1",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "14",
+      "humidity": "19",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1023",
+      "cloud": "0",
+      "dew": "-26"
+    });
+    hoursdata.push({
+      "fxTime": "09:00",
+      "temp": "-4",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "356",
+      "windDir": "北风",
+      "windScale": "3-4",
+      "windSpeed": "14",
+      "humidity": "17",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1023",
+      "cloud": "0",
+      "dew": "-25"
+    });
+    hoursdata.push({
+      "fxTime": "10:00",
+      "temp": "-1",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "344",
+      "windDir": "西北风",
+      "windScale": "3-4",
+      "windSpeed": "14",
+      "humidity": "14",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1024",
+      "cloud": "0",
+      "dew": "-26"
+    });
+    hoursdata.push({
+      "fxTime": "11:00",
+      "temp": "0",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "333",
+      "windDir": "西北风",
+      "windScale": "3-4",
+      "windSpeed": "14",
+      "humidity": "12",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1024",
+      "cloud": "0",
+      "dew": "-26"
+    });
+    hoursdata.push({
+      "fxTime": "12:00",
+      "temp": "1",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "325",
+      "windDir": "西北风",
+      "windScale": "3-4",
+      "windSpeed": "14",
+      "humidity": "10",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1025",
+      "cloud": "16",
+      "dew": "-28"
+    });
+    hoursdata.push({
+      "fxTime": "13:00",
+      "temp": "2",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "319",
+      "windDir": "西北风",
+      "windScale": "3-4",
+      "windSpeed": "16",
+      "humidity": "8",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1025",
+      "cloud": "32",
+      "dew": "-29"
+    });
+    hoursdata.push({
+      "fxTime": "14:00",
+      "temp": "2",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "313",
+      "windDir": "西北风",
+      "windScale": "3-4",
+      "windSpeed": "16",
+      "humidity": "9",
+      "pop": "0",
+      "precip": "0.0",
+      "pressure": "1025",
+      "cloud": "48",
+      "dew": "-27"
+    });
+
+    this.setData({
+      hours: hoursdata
+    });
+
+    // return;
     // 获取天气
     if (options.city) {
       this.getWeatherByName(options.city);
@@ -38,30 +431,6 @@ Page({
     this.setData({
       date: parseDateTime(new Date, "yyyy-MM-dd")
     }); // 保存
-  },
-
-  /**
-   * 版本检查
-   */
-  checkVersion() {
-    const localVersion = wx.getStorageSync('version');
-    if (localVersion !== config.version) {
-      wx.showModal({
-        title: `${config.name} ${config.version}`,
-        content: `${config.versionDate}${config.versionInfo}`,
-        showCancel: false,
-        confirmText: '我知道了',
-        success: (res) => {
-          if (res.confirm) {
-            // 设置版本号
-            wx.setStorage({
-              key: 'version',
-              data: config.version
-            });
-          }
-        }
-      });
-    }
   },
 
   /**
@@ -108,10 +477,11 @@ Page({
         });
         this.getWeatherInfos();
       },
-      fail: () => {
+      fail: (err) => {
+        wx.hideToast()
         wx.showModal({
-          title: '网络超时',
-          content: '连接服务器失败,请检查网络设置！',
+          title: err,
+          content: '查询城市信息失败！',
           showCancel: false
         });
       }
@@ -146,11 +516,11 @@ Page({
         });
         wx.hideToast();
       },
-      fail: () => {
+      fail: (err) => {
         wx.hideToast();
         wx.showModal({
-          title: '网络超时',
-          content: '连接服务器失败,请检查网络设置！',
+          title: err,
+          content: '获取实时天气数据失败！',
           showCancel: false
         });
       }
@@ -162,7 +532,7 @@ Page({
    * @param {*} lat 
    * @param {*} lng 
    */
-  getSunRise() {
+  getSunTime() {
     wx.request({
       url: `${config.request.sun}`,
       data: {
@@ -180,10 +550,11 @@ Page({
           sun: sun
         });
       },
-      fail: () => {
+      fail: (err) => {
+        wx.hideToast()
         wx.showModal({
-          title: '网络超时',
-          content: '连接服务器失败,请检查网络设置！',
+          title: err,
+          content: '获取日出日落时刻失败！',
           showCancel: false
         });
       }
@@ -214,10 +585,11 @@ Page({
           indices: indices
         });
       },
-      fail: () => {
+      fail: (err) => {
+        wx.hideToast()
         wx.showModal({
-          title: '网络超时',
-          content: '连接服务器失败,请检查网络设置！',
+          title: err,
+          content: '获取城市生活指数失败！',
           showCancel: false
         });
       }
@@ -242,10 +614,11 @@ Page({
           air: res.data.now
         });
       },
-      fail: () => {
+      fail: (err) => {
+        wx.hideToast()
         wx.showModal({
-          title: '网络超时',
-          content: '连接服务器失败,请检查网络设置！',
+          title: err,
+          content: '获取城市空气指数信息失败！',
           showCancel: false
         });
       }
@@ -278,10 +651,11 @@ Page({
           daily: d
         });
       },
-      fail: () => {
+      fail: (err) => {
+        wx.hideToast()
         wx.showModal({
-          title: '网络超时',
-          content: '连接服务器失败,请检查网络设置！',
+          title: err,
+          content: '获取未来3天天气失败！',
           showCancel: false
         });
       }
@@ -316,11 +690,11 @@ Page({
         });
         this.getWeatherInfos();
       },
-      fail: () => {
+      fail: (err) => {
         wx.hideToast()
         wx.showModal({
-          title: '网络超时',
-          content: '当前网络不可用,请检查网络设置！',
+          title: err,
+          content: '查询城市信息失败！',
           showCancel: false
         });
       }
@@ -332,7 +706,7 @@ Page({
    */
   getWeatherInfos() {
     this.searchByLocation();
-    this.getSunRise();
+    this.getSunTime();
     this.getCityIndices();
     this.getAir();
     this.getDaily();
@@ -373,7 +747,7 @@ Page({
       case 2:
         return "后天";
       default:
-        return formatWeekday(date.getUTCDay());
+        return this.formatWeekday(date.getUTCDay());
     }
   },
 

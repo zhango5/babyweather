@@ -13,7 +13,7 @@
 }
 
 .bad {
-    background: -webkit-linear-gradient(top, #3d395a, #435f6d);
+  background: -webkit-linear-gradient(top, #3d395a, #435f6d);
 }
 
 /* 搜索 */
@@ -240,6 +240,41 @@
   border-left: 2rpx solid gray;
 }
 
+.weather .hours {
+  height: 22vh;
+  width: 100%;
+  margin: 1vh 2vh;
+  border-radius: 20rpx;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.weather .hours .scrollarea {
+  width: 100%;
+  white-space: nowrap;
+  display: flex;
+}
+
+.weather .hours .scroll-view-item {
+  display: inline-block;
+  width: 15vh;
+  height: 20vh;
+  border-radius: 20rpx;
+  text-align: center;
+}
+
+.weather .hours .icon {
+  height: 60rpx;
+  width: 60rpx;
+}
+
+.weather .hours .info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1vh 6px;
+  font-size: 10pt;
+}
+
 /* 未来天气预报 */
 .weather .forecast {
   height: 21vh;
@@ -340,4 +375,40 @@
 
 .weather .suggestion .content {
   font-size: 10pt;
+}
+
+@keyframes heartbeat-ani {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.heartbeat {
+  animation: heartbeat-ani 1s infinite;
+}
+
+@keyframes rotate-ani {
+  0% {
+    transform: rotate(-20deg);
+  }
+
+  50% {
+    transform: rotate(20deg);
+  }
+
+  100% {
+    transform: rotate(-20deg);
+  }
+}
+
+.rotate {
+  animation: rotate-ani 1s infinite
 }

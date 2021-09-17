@@ -3,8 +3,8 @@
 	<view class="search">
 		<!-- 输入框 -->
 		<view class="left">
-			<input class="inputField" confirm-type="search" bindinput="onInputFieldChange" bindconfirm="onSearchBtnClick"
-				placeholder="请输入城市名" value="{{inputContent}}" />
+			<input class="inputField" confirm-type="search" bindinput="onInputFieldChange"
+				bindconfirm="onSearchBtnClick" placeholder="请输入城市名" value="{{inputContent}}" />
 			<!-- 清除按钮 -->
 			<image class="clearBtn" src="../../images/clear.png"
 				style="display:{{inputContent.length > 0 ? 'block' : 'none'}}" bindtap="onClearBtnClick"></image>
@@ -41,8 +41,8 @@
 				<view class="symbol">℃</view>
 			</view>
 			<!-- 图片 -->
-			<view class="weatherImg" wx:if="{{weather}}">
-				<image class="img" src='{{"../../images/color-128/" + weather.icon + ".png"}}'></image>
+			<view class="weatherImg" wx:if="{{weather.icon != undefined}}">
+				<image class="img heartbeat" src='{{"../../images/color-128/" + weather.icon + ".png"}}'></image>
 			</view>
 			<!-- 全天 -->
 			<view class="detail">
@@ -68,6 +68,24 @@
 		</view>
 	</view>
 
+	<!-- 24小时预报 -->
+	<view class="hours" wx:if="{{false}}">
+		<scroll-view class="scrollarea" scroll-x="true" bindscroll="scroll">
+			<view class="scroll-view-item" wx:for="{{hours}}" wx:for-index="index" wx:for-item="hour" wx:key="weekday">
+				<view class="info">{{hour.fxTime}}</view>
+				<view class="info" style="font-size: 12pt;">{{hour.temp}} ℃</view>
+				<view class="info">
+					<image class="icon" src='{{"../../images/color-128/" + hour.icon + ".png"}}'></image>
+				</view>
+				<!-- <view class="info">{{hour.text}}</view> -->
+				<view class="info">
+					<image class="icon" src='{{"../../images/color-128/000.png"}}'></image>
+					<view class="info">{{hour.windSpeed}}km/h</view>
+				</view>
+			</view>
+		</scroll-view>
+	</view>
+
 	<!-- 天气预报 -->
 	<view class="forecast">
 		<view class="block">
@@ -80,12 +98,12 @@
 					<view class="item">
 						<view class="info">{{day.fxDate}}</view>
 						<view class="info">
-							<image class="icon" src='{{"../../images/color-128/" + day.iconDay + ".png"}}'></image>
+							<image class="icon rotate" src='{{"../../images/color-128/" + day.iconDay + ".png"}}'></image>
 							<!-- <view class="type">{{day.textDay}}</view> -->
 						</view>
 						<view class="info">~</view>
 						<view class="info">
-							<image class="icon" src='{{"../../images/color-128/" + day.iconNight + ".png"}}'></image>
+							<image class="icon rotate" src='{{"../../images/color-128/" + day.iconNight + ".png"}}'></image>
 							<!-- <view class="type">{{day.textNight}}</view> -->
 						</view>
 						<view>{{day.tempMin}} / {{day.tempMax}} ℃</view>
