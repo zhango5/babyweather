@@ -8,6 +8,13 @@
   color: white;
 }
 
+::-webkit-scrollbar {
+  display:none;
+  width:0;
+  height:0;
+  color:transparent;
+}
+
 .well {
   background: -webkit-linear-gradient(top, #207be4, #fcb16d);
 }
@@ -103,6 +110,7 @@
 .weather .header .info .localImg {
   height: 30rpx;
   width: 30rpx;
+  margin: auto 10rpx;
 }
 
 /* 城市名 */
@@ -241,23 +249,24 @@
 }
 
 .weather .hours {
-  height: 22vh;
+  height: 28vh;
   width: 100%;
   margin: 1vh 2vh;
   border-radius: 20rpx;
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.weather .hours .scrollarea {
+.weather .hours .hours-area {
   width: 100%;
+  height: 100%;
   white-space: nowrap;
   display: flex;
 }
 
-.weather .hours .scroll-view-item {
+.weather .hours .hours-item {
   display: inline-block;
   width: 15vh;
-  height: 20vh;
+  height: 26vh;
   border-radius: 20rpx;
   text-align: center;
 }
@@ -277,7 +286,7 @@
 
 /* 未来天气预报 */
 .weather .forecast {
-  height: 21vh;
+  height: 24vh;
   width: 100%;
   margin-bottom: 2vh;
   border-radius: 20rpx;
@@ -304,6 +313,19 @@
   height: 100%;
   width: 80%;
   padding: 0;
+}
+
+.weather .forecast .container .daily-area {
+  width: 100%;
+  height: 24vh;
+}
+
+.weather .forecast .container .daily-item {
+  display: inline-block;
+  width: 100%;
+  height: 8vh;
+  border-radius: 20rpx;
+  text-align: center;
 }
 
 .weather .forecast .item {

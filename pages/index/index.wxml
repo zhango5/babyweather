@@ -69,9 +69,9 @@
 	</view>
 
 	<!-- 24小时预报 -->
-	<view class="hours" wx:if="{{false}}">
-		<scroll-view class="scrollarea" scroll-x="true" bindscroll="scroll">
-			<view class="scroll-view-item" wx:for="{{hours}}" wx:for-index="index" wx:for-item="hour" wx:key="weekday">
+	<view class="hours">
+		<scroll-view class="hours-area" scroll-x="true" bindscroll="scroll" enable-flex="true">
+			<view class="hours-item" wx:for="{{hours}}" wx:for-index="index" wx:for-item="hour" wx:key="weekday">
 				<view class="info">{{hour.fxTime}}</view>
 				<view class="info" style="font-size: 12pt;">{{hour.temp}} ℃</view>
 				<view class="info">
@@ -79,7 +79,9 @@
 				</view>
 				<!-- <view class="info">{{hour.text}}</view> -->
 				<view class="info">
-					<image class="icon" src='{{"../../images/color-128/000.png"}}'></image>
+					<image class="icon" src="../../images/color-128/000.png" style='{{"transform: rotate(" + hour.wind360 + "deg);"}}'></image>
+				</view>
+				<view class="info">
 					<view class="info">{{hour.windSpeed}}km/h</view>
 				</view>
 			</view>
@@ -93,23 +95,27 @@
 			<view class="blank"></view>
 			<!-- 天气信息 -->
 			<view class="container">
-				<view wx:for="{{daily}}" wx:for-index="index" wx:for-item="day" wx:key="weekday">
-					<view class="separator" wx:if="{{index===1}}"></view>
-					<view class="item">
-						<view class="info">{{day.fxDate}}</view>
-						<view class="info">
-							<image class="icon rotate" src='{{"../../images/color-128/" + day.iconDay + ".png"}}'></image>
-							<!-- <view class="type">{{day.textDay}}</view> -->
+				<scroll-view class="daily-area" scroll-y="true">
+					<view class="daily-item" wx:for="{{daily}}" wx:for-index="index" wx:for-item="day" wx:key="weekday">
+						<view class="separator" wx:if="{{index > 0}}"></view>
+						<view class="item">
+							<view class="info">{{day.fxDate}}</view>
+							<view class="info">
+								<image class="icon rotate" src='{{"../../images/color-128/" + day.iconDay + ".png"}}'>
+								</image>
+								<!-- <view class="type">{{day.textDay}}</view> -->
+							</view>
+							<view class="info">~</view>
+							<view class="info">
+								<image class="icon rotate" src='{{"../../images/color-128/" + day.iconNight + ".png"}}'>
+								</image>
+								<!-- <view class="type">{{day.textNight}}</view> -->
+							</view>
+							<view>{{day.tempMin}} / {{day.tempMax}} ℃</view>
 						</view>
-						<view class="info">~</view>
-						<view class="info">
-							<image class="icon rotate" src='{{"../../images/color-128/" + day.iconNight + ".png"}}'></image>
-							<!-- <view class="type">{{day.textNight}}</view> -->
-						</view>
-						<view>{{day.tempMin}} / {{day.tempMax}} ℃</view>
+						<!-- <view class="separator" wx:if="{{index===1}}"></view> -->
 					</view>
-					<view class="separator" wx:if="{{index===1}}"></view>
-				</view>
+				</scroll-view>
 			</view>
 			<!-- 后空白部分 -->
 			<view class="blank"></view>
@@ -144,5 +150,4 @@
 			<view class="content">{{ indices[9] }}</view>
 		</view>
 	</view>
-
 </view>
