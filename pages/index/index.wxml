@@ -24,8 +24,8 @@
 		<!-- 地址、时间 -->
 		<view class="info" bindtap="onLocalBtnClick">
 			<image class="localImg" src="../../images/location.png"></image>
-			<view class="city">{{city.name}}</view>
-			<view class="date">（{{date}}）</view>
+			<view class="city">{{city.adm1}} {{city.adm2}} {{city.name}}</view>
+			<!-- <view class="date">（{{date}}）</view> -->
 		</view>
 		<!-- 更新时间、刷新按钮 -->
 		<view class="update" bindtap="onRefreshBtnClick">{{updateTime}} 更新
@@ -41,7 +41,7 @@
 				<view class="symbol">℃</view>
 			</view>
 			<!-- 图片 -->
-			<view class="weatherImg" wx:if="{{weather.icon != undefined}}">
+			<view class="weatherImg" wx:if="{{weather.icon != undefined}}" bindtap="broadcastWeather">
 				<image class="img heartbeat" src='{{"../../images/color-128/" + weather.icon + ".png"}}'></image>
 			</view>
 			<!-- 全天 -->
@@ -70,20 +70,19 @@
 
 	<!-- 24小时预报 -->
 	<view class="hours">
-		<scroll-view class="hours-area" scroll-x="true" bindscroll="scroll" enable-flex="true">
+		<scroll-view class="hours-area" scroll-x="true" enable-flex="true">
 			<view class="hours-item" wx:for="{{hours}}" wx:for-index="index" wx:for-item="hour" wx:key="weekday">
 				<view class="info">{{hour.fxTime}}</view>
 				<view class="info" style="font-size: 12pt;">{{hour.temp}} ℃</view>
 				<view class="info">
-					<image class="icon" src='{{"../../images/color-128/" + hour.icon + ".png"}}'></image>
+					<image class="icon rotate" src='{{"../../images/color-128/" + hour.icon + ".png"}}'></image>
 				</view>
 				<!-- <view class="info">{{hour.text}}</view> -->
 				<view class="info">
-					<image class="icon" src="../../images/color-128/000.png" style='{{"transform: rotate(" + hour.wind360 + "deg);"}}'></image>
+					<image class="icon" src="../../images/color-128/000.png"
+						style='{{"transform: rotate(" + hour.wind360 + "deg);"}}'></image>
 				</view>
-				<view class="info">
-					<view class="info">{{hour.windSpeed}}km/h</view>
-				</view>
+				<view class="info">{{hour.windSpeed}}km/h</view>
 			</view>
 		</scroll-view>
 	</view>

@@ -3,6 +3,8 @@ import {
 } from '../../utils/util.js';
 import config from '../../config/config.js';
 
+const weatheraudio = wx.createInnerAudioContext();
+
 Page({
   data: {
     date: '', // 日期
@@ -16,6 +18,15 @@ Page({
     daily: {}, // 逐天天气预报
     hours: {}, // 24小时预报
     inputContent: '', // 输入框内容
+    audios: [
+      {text:'阴', path: 'audios/1003.mp3'},
+      {text:'多云', path: 'audios/cloud.mp3'},
+      {text:'晴', path: 'audios/sunny.mp3'},
+      {text:'雨', path: 'audios/1000.mp3'},
+      {text:'小雨', path: 'audios/1000.mp3'},
+      {text:'大雨', path: 'audios/1000.mp3'},
+      {text:'雪', path: 'audios/1916.mp3'},
+    ],
   },
 
   localCity: null, // 本地城市
@@ -51,6 +62,7 @@ Page({
     });
     // 获取当前经纬度
     wx.getLocation({
+      isHighAccuracy: true,
       success: (res) => {
         this.getCityByLocation(res.latitude, res.longitude);
       },
@@ -75,7 +87,8 @@ Page({
       url: config.request.cityinfo,
       data: {
         key: config.request.key,
-        location: lng + ',' + lat
+        location: lng + ',' + lat,
+        range: 'cn'
       },
       success: (res) => {
         // 保存城市数据
@@ -114,6 +127,15 @@ Page({
         location: this.data.city.id
       },
       success: (res) => {
+        weatheraudio.src = '';
+        let i;
+        for (i in this.data.audios) {
+          if (this.data.audios[i].text == res.data.now.text) {
+            weatheraudio.src = this.data.audios[i].path;
+            break;
+          }
+        }
+
         // 保存天气数据
         this.setData({
           weather: res.data.now,
@@ -483,6 +505,12 @@ Page({
       title: `${city}当前天气：${now.text} | ${now.temp}℃`,
       path: `city=${city}`,
     };
-  }
+  },
 
+  /**
+   * 
+   */
+  broadcastWeather() {
+    weatheraudio.play();
+  }
 });
