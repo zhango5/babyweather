@@ -136,6 +136,9 @@ Page({
           }
         }
 
+        console.log(weatheraudio.src)
+        console.log(res.data.now)
+
         // 保存天气数据
         this.setData({
           weather: res.data.now,

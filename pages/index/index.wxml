@@ -42,7 +42,7 @@
 			</view>
 			<!-- 图片 -->
 			<view class="weatherImg" wx:if="{{weather.icon != undefined}}" bindtap="broadcastWeather">
-				<image class="img heartbeat" src='{{"../../images/color-128/" + weather.icon + ".png"}}'></image>
+				<image class="img heartbeat" src='{{"../../images/icons/" + weather.icon + ".svg"}}'></image>
 			</view>
 			<!-- 全天 -->
 			<view class="detail">
@@ -75,7 +75,7 @@
 				<view class="info">{{hour.fxTime}}</view>
 				<view class="info" style="font-size: 12pt;">{{hour.temp}} ℃</view>
 				<view class="info">
-					<image class="icon rotate" src='{{"../../images/color-128/" + hour.icon + ".png"}}'></image>
+					<image class="icon rotate" src='{{"../../images/icons/" + hour.icon + ".svg"}}'></image>
 				</view>
 				<!-- <view class="info">{{hour.text}}</view> -->
 				<view class="info">
@@ -100,13 +100,13 @@
 						<view class="item">
 							<view class="info">{{day.fxDate}}</view>
 							<view class="info">
-								<image class="icon rotate" src='{{"../../images/color-128/" + day.iconDay + ".png"}}'>
+								<image class="icon rotate" src='{{"../../images/icons/" + day.iconDay + ".svg"}}'>
 								</image>
 								<!-- <view class="type">{{day.textDay}}</view> -->
 							</view>
 							<view class="info">~</view>
 							<view class="info">
-								<image class="icon rotate" src='{{"../../images/color-128/" + day.iconNight + ".png"}}'>
+								<image class="icon rotate" src='{{"../../images/icons/" + day.iconNight + ".svg"}}'>
 								</image>
 								<!-- <view class="type">{{day.textNight}}</view> -->
 							</view>
