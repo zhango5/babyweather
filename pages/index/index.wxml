@@ -24,8 +24,10 @@
 		<!-- 地址、时间 -->
 		<view class="info" bindtap="onLocalBtnClick">
 			<image class="localImg" src="../../images/location.png"></image>
-			<view class="city">{{city.adm1}} {{city.adm2}} {{city.name}}</view>
-			<!-- <view class="date">（{{date}}）</view> -->
+            <view wx:if="{{city.adm2 == city.name}}" class="city" id="city">{{city.adm1}}</view>
+            <view wx:elif="{{city.adm1 == city.adm2 + '市'}}" class="city" id="city">{{city.adm1}} {{city.name}}区</view>
+			<view wx:else class="city" id="city">{{city.adm1}} {{city.adm2}}市 {{city.name}}区</view>
+			<!-- <view class="date">海拔：{{altitude}}米</view> -->
 		</view>
 		<!-- 更新时间、刷新按钮 -->
 		<view class="update" bindtap="onRefreshBtnClick">{{updateTime}} 更新
