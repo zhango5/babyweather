@@ -1,4 +1,4 @@
-<view class="weather {{weather.text=='晴'?'well':'bad'}}">
+<view class="weather {{weather.text=='晴'?'sunny':'cloudy'}}">
 	<!-- 搜索 -->
 	<view class="search">
 		<!-- 输入框 -->
@@ -62,7 +62,8 @@
 			<view class="separator"></view>
 			<view class="item">PM 2.5：{{air.pm2p5}}</view>
 			<!-- 2 -->
-			<view class="item">气压：{{weather.pressure}} hPa</view>
+			<view class="item" wx:if="{{weather.pressure < 1000}}">气压：{{weather.pressure}} hPa</view>
+            <view class="item" wx:else>气压：{{weather.pressure / 1000}} kPa</view>
 			<view class="separator"></view>
 			<view class="item">风向：{{weather.windDir}}</view>
 			<view class="separator"></view>
@@ -81,7 +82,7 @@
 				</view>
 				<!-- <view class="info">{{hour.text}}</view> -->
 				<view class="info">
-					<image class="icon" src="../../images/color-128/000.png"
+					<image class="icon" src="../../images/color-128/001.png"
 						style='{{"transform: rotate(" + hour.wind360 + "deg);"}}'></image>
 				</view>
 				<view class="info">{{hour.windSpeed}}km/h</view>

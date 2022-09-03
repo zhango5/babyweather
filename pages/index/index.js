@@ -84,7 +84,7 @@ Page({
         });
         // 获取当前经纬度
         wx.getLocation({
-            isHighAccuracy: true,
+            isHighAccuracy: false,
             // altitude: true,
             // highAccuracyExpireTime: 10000,
             success: (res) => {
@@ -199,9 +199,14 @@ Page({
                 for (i in res.data.hourly) {
                     let h = res.data.hourly[i];
                     h.fxTime = parseDateTime(new Date(res.data.hourly[i].fxTime), "HH:mm");
-                    h.wind360 = res.data.hourly[i].wind360 - 45;
+                    h.wind360 = res.data.hourly[i].wind360 - 45 + 180; // 减去图片自身45度角，加上180换算风向，0度是北风，但却指向南方，90度是东风，却指向西方
+
+                    if (h.wind360 >= 360) {
+                        h.wind360 -= 360;
+                    }
                     hourly.push(h);
                 }
+
                 // 保存数据
                 this.setData({
                     hours: hourly
